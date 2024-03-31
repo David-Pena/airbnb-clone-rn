@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
       height: 1,
     },
   },
-  // Optimize
   categoryBtn: {
     flex: 1,
     alignItems: "center",

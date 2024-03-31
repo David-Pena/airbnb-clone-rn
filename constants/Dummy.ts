@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 
-type Category = {
+export type Category = {
   name: string;
   icon: keyof typeof MaterialIcons.glyphMap;
 };
