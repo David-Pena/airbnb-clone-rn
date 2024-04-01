@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Category } from "@/constants/Dummy";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import Listings from "@/components/Listings";
@@ -15,10 +15,13 @@ interface Props {
 const ListingsBottomSheet = ({ listings, category }: Props) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
+  const [refresh, setRefresh] = useState(0);
+
   const snapPoints = useMemo(() => ["10%", "100%"], []);
 
   const showMap = () => {
     bottomSheetRef.current?.collapse();
+    setRefresh(refresh + 1);
   };
 
   return (
@@ -31,7 +34,7 @@ const ListingsBottomSheet = ({ listings, category }: Props) => {
     >
       <BottomSheetView style={{ flex: 1, alignItems: "center" }}>
         <View style={{ flex: 1 }}>
-          <Listings listings={listings} category={category} />
+          <Listings listings={listings} category={category} refresh={refresh} />
           <View style={styles.absoluteBtn}>
             <TouchableOpacity onPress={showMap} style={styles.btn}>
               <Text style={{ fontFamily: "mon-sb", color: "#fff" }}>Map</Text>

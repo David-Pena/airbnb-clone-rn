@@ -8,14 +8,14 @@ import ListingsBottomSheet from "@/components/ListingsBottomSheet";
 
 const Page = () => {
   const [category, setCategory] = useState("Tiny homes");
-  const items = useMemo(() => ListingsData as any, []);
+  const items = useMemo(() => ListingsData as Listing[], []);
 
   const onDataChanged = (category: string) => {
     setCategory(category);
   };
 
   return (
-    <View style={{ flex: 1, marginTop: 96 }}>
+    <View style={{ flex: 1, marginTop: 50 }}>
       <Stack.Screen
         options={{
           header: () => <ExploreHeader onCategoryChange={onDataChanged} />,
