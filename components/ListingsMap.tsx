@@ -58,7 +58,6 @@ const ListingsMap = ({ listings }: Props) => {
         style={StyleSheet.absoluteFill}
         provider={PROVIDER_GOOGLE}
         showsUserLocation
-        showsMyLocationButton
         initialRegion={INITIAL_REGION}
         clusterColor="#fff"
         clusterTextColor="#000"
