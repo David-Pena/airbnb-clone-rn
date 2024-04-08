@@ -8,6 +8,8 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { places } from "@/assets/data/places";
+import DatePicker from "react-native-modern-datepicker";
+import { guests } from "@/constants/Dummy";
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -16,10 +18,14 @@ const Booking = () => {
 
   const [openCard, setOpenCard] = useState(0);
   const [selectedPlace, setSelectedPlace] = useState(0);
+  const [groups, setGroups] = useState(guests);
+
+  const today = new Date().toISOString().substring(0, 10);
 
   const onClearAll = () => {
     setOpenCard(0);
     setSelectedPlace(0);
+    setGroups(guests);
   };
 
   return (
@@ -53,15 +59,26 @@ const Booking = () => {
                 />
               </View>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 25 }}
+              >
                 {places &&
                   places.map((item, idx) => (
                     <TouchableOpacity key={idx} onPress={() => setSelectedPlace(idx)}>
                       <Image
-                        source={{ uri: item.img }}
+                        source={item.img}
                         style={selectedPlace === idx ? styles.placeSelected : styles.place}
                       />
-                      <Text style={{ fontFamily: "mon", paddingTop: 6 }}>{item.title}</Text>
+                      <Text
+                        style={[
+                          styles.imgText,
+                          { fontFamily: selectedPlace === idx ? "mon-sb" : "mon" },
+                        ]}
+                      >
+                        {item.title}
+                      </Text>
                     </TouchableOpacity>
                   ))}
               </ScrollView>
@@ -89,7 +106,19 @@ const Booking = () => {
             <Animated.Text entering={FadeIn} style={styles.cardHeader}>
               When's your trip?
             </Animated.Text>
-            <Animated.View style={styles.cardBody}></Animated.View>
+            <Animated.View style={styles.cardBody}>
+              <DatePicker
+                current={today}
+                selected={today}
+                mode={"calendar"}
+                options={{
+                  defaultFont: "mon",
+                  headerFont: "mon-sb",
+                  borderColor: "transparent",
+                  mainColor: Colors.primary,
+                }}
+              />
+            </Animated.View>
           </>
         )}
       </View>
@@ -113,7 +142,67 @@ const Booking = () => {
             <Animated.Text entering={FadeIn} style={styles.cardHeader}>
               Who's coming?
             </Animated.Text>
-            <Animated.View style={styles.cardBody}></Animated.View>
+            <Animated.View style={styles.cardBody}>
+              {groups.map((item, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.guestItem,
+                    idx + 1 < guests.length ? styles.itemBorder : null,
+                  ]}
+                >
+                  <View>
+                    <Text style={{ fontFamily: "mon-sb", fontSize: 14 }}>{item.name}</Text>
+                    <Text style={{ fontFamily: "mon", fontSize: 14, color: Colors.grey }}>
+                      {item.text}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        const newGroups = [...groups];
+                        newGroups[idx].count =
+                          newGroups[idx].count > 0 ? newGroups[idx].count - 1 : 0;
+                        setGroups(newGroups);
+                      }}
+                    >
+                      <Ionicons
+                        name="remove-circle-outline"
+                        size={26}
+                        color={groups[idx].count > 0 ? Colors.grey : "#cdcdcd"}
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontFamily: "mon",
+                        fontSize: 16,
+                        minWidth: 18,
+                        textAlign: "center",
+                      }}
+                    >
+                      {item.count}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        const newGroups = [...groups];
+                        newGroups[idx].count++;
+                        setGroups(newGroups);
+                      }}
+                    >
+                      <Ionicons name="add-circle-outline" size={26} color={Colors.grey} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </Animated.View>
           </>
         )}
       </View>
@@ -217,13 +306,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   place: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 10,
   },
   placeSelected: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: Colors.grey,
+  },
+  imgText: {
+    paddingTop: 6,
+    textAlign: "center",
+  },
+  guestItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+  },
+  itemBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.grey,
   },
 });
